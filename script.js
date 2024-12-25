@@ -8,7 +8,7 @@ let userMessage = null;
 let isResponseGenerating = false;
 
 //API configuration
-const GEMINI_API_KEY = "AIzaSyCyD6NZOsCTMD6K2uRs7uUX2fNmQn8mhBE";
+const GEMINI_API_KEY = "";
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 const loadLocalstorageData = () => {

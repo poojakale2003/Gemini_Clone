@@ -7,9 +7,6 @@ const deleteChatButton = document.querySelector("#delete-chat-button");
 let userMessage = null; 
 let isResponseGenerating = false;
 
-//API configuration
-const GEMINI_API_KEY = "AIzaSyCyD6NZOsCTMD6K2uRs7uUX2fNmQn8mhBE";
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 const loadLocalstorageData = () => {
     const savedChats = localStorage.getItem("savedChats");
@@ -58,40 +55,30 @@ const showTypingEffect = (text, textElement, incomingMessageDiv) => {
 
 }
 
-//fetch response from the API base on user message
-const generateAPIresponse = async(incomingMessageDiv) =>{
-    const textElement = incomingMessageDiv.querySelector(".text"); //get text element
+const API_URL = "http://localhost:3000/api/generate";
 
-    //sed a post request to hte API with the user's message
-    try{
-        const response = await fetch(API_URL, {
-            method: "POST",
-            headers:{"Content-Type": "application/json"},
-            body: JSON.stringify({
-                contents: [{
-                    role: "user",
-                    parts: [{
-                        text: userMessage
-                    }]
-                }]
-            })
-        });
+const generateAPIresponse = async (incomingMessageDiv) => {
+  const textElement = incomingMessageDiv.querySelector(".text");
 
-        const data = await response.json();
-        if(!response.ok) throw new Error(data.error.message)
-         
-        //Get API response text and remove asterisk from it
-        const apiResponse = data?.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '$1');
-        showTypingEffect(apiResponse, textElement, incomingMessageDiv);
-    }catch (error)
-    {
-      isResponseGenerating = false;
-      textElement.innerText = error.message;
-      textElement.classList.add("error");
-    }finally{
-        incomingMessageDiv.classList.remove("loading");
-    }
-}
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ message: userMessage })
+    });
+
+    const data = await response.json();
+    const apiResponse = data?.candidates[0]?.content?.parts[0]?.text?.replace(/\*\*(.*?)\*\*/g, '$1');
+    showTypingEffect(apiResponse, textElement, incomingMessageDiv);
+  } catch (error) {
+    isResponseGenerating = false;
+    textElement.innerText = error.message;
+    textElement.classList.add("error");
+  } finally {
+    incomingMessageDiv.classList.remove("loading");
+  }
+};
+
 
 //show loading animation while waiting for the API response
 const showLoadingAnimation = () => {
@@ -112,6 +99,7 @@ const showLoadingAnimation = () => {
         chatList.scrollTo(0, chatList.scrollHeight); // Scroll to the bottom
         generateAPIresponse(incomingMessageDiv);
 }
+
 
 //copy message text to the clipboard
 const copyMessage = (copyIcon) => {

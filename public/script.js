@@ -55,7 +55,7 @@ const showTypingEffect = (text, textElement, incomingMessageDiv) => {
 
 }
 
-const API_URL = "http://https://geminiclone-production.up.railway.app//api/generate";
+const API_URL = "https://geminiclone-production.up.railway.app/api/generate";
 
 const generateAPIresponse = async (incomingMessageDiv) => {
   const textElement = incomingMessageDiv.querySelector(".text");
